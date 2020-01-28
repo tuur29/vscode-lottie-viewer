@@ -1,9 +1,32 @@
 const vscode = require('vscode');
 const path = require('path');
 
+// This is a copy of the web/index.html file
+const getHTML = scriptUrl => {
+    return `
+  <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <meta http-equiv="Content-Security-Policy" content="default-src 'self';
+              script-src vscode-resource: 'self' 'unsafe-inline' 'unsafe-eval' https:;
+              style-src vscode-resource: 'self' 'unsafe-inline';
+              img-src vscode-resource: 'self' "/>
+      <title>web</title>
+    </head>
+    <body>
+      <div id="app"></div>
+      <script src="${scriptUrl}"></script>
+    </body>
+  </html>  
+    `;
+}
+
+
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
+    let currentPanel = undefined;
+
     function createLottieData() {
         const editor = vscode.window.activeTextEditor;
         if (editor) {
@@ -17,16 +40,10 @@ function activate(context) {
         }
 	}
 
-	const htmlPath = path.resolve(context.extensionPath, './web/index.html');
-  	const indexUri = vscode.Uri.file(htmlPath);
-
     vscode.workspace.onDidChangeTextDocument((e) => {
-        if (e.document === vscode.window.activeTextEditor.document) {
+        if (e.document === vscode.window.activeTextEditor.document && currentPanel) {
 			const data = createLottieData();
-			vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', indexUri, {
-				type: 'update',
-				data,
-			});
+			currentPanel.webview.postMessage({type: 'update', data});
         }
 	});
 
@@ -40,17 +57,30 @@ function activate(context) {
             return; // No open text editor
         }
 
-        return vscode.commands.executeCommand('vscode.previewHtml', indexUri, vscode.ViewColumn.Two, 'Lottie Viewer', {
-			allowScripts: true,
-		}).then(() => {
-			const data = createLottieData();
-			vscode.commands.executeCommand('_workbench.htmlPreview.postMessage', indexUri, {
-				type: 'init',
-				data,
-			});
-		}, (reason) => {
-			vscode.window.showErrorMessage(reason);
-		});
+        if (currentPanel) {
+            // Focus webview
+            currentPanel.reveal(vscode.ViewColumn.One);
+        } else {
+            // Setup webview
+            currentPanel = vscode.window.createWebviewPanel(
+                'vscode.previewHtml',
+                'Lottie Viewer',
+                vscode.ViewColumn.Two,
+                { enableScripts: true }
+            );
+            // Load app
+            const scriptPath = vscode.Uri.file(path.join(context.extensionPath, 'web/dist', 'build.js'));
+            const scriptUri = currentPanel.webview.asWebviewUri(scriptPath);
+            currentPanel.webview.html = getHTML(scriptUri);
+            currentPanel.onDidDispose(
+                () => { currentPanel = undefined; },
+                undefined,
+                context.subscriptions
+            );
+        }
+
+        const data = createLottieData();
+        currentPanel.webview.postMessage({type: 'init', data});
     });
 
     context.subscriptions.push(disposable);
