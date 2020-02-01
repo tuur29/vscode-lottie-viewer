@@ -45,4 +45,10 @@ export default {
       state.instance.loop = value;
     }
   },
+  SET_CURRENT_FRAME(state, value) {
+    state.play = false;
+    if (state.instance) {
+      state.instance.goToAndStop(parseInt(value), true);
+    }
+  },
 };

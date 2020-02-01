@@ -15,7 +15,6 @@ export default {
     return state.speed;
   },
   getFramesCount(state) {
-    console.log('ah', state.instance);
     return state.instance ? state.instance.totalFrames : 0;
   },
   getCurrentFrame(state) {

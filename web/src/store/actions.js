@@ -33,4 +33,7 @@ export default {
   setSpeed(store, speed) {
     store.commit('SET_SPEED', speed);
   },
+  setCurrentFrame(store, frame) {
+    store.commit('SET_CURRENT_FRAME', frame);
+  },
 };

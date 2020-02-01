@@ -8,6 +8,7 @@
     <div class="view-controls-timing">
       {{ getCurrentFrame }} / {{ getFramesCount }} frames ({{ getFrameRate }} FPS)
     </div>
+    <controls-slider/>
   </div>
 </template>
 
@@ -17,6 +18,7 @@
   import ControlsPlayPause from './controls/controls-play-pause';
   import ControlsSpeed from './controls/controls-speed';
   import ControlsLoop from './controls/controls-loop';
+  import ControlsSlider from './controls/controls-slider';
 
   export default {
     name: 'view-controls',
@@ -24,6 +26,7 @@
       ControlsPlayPause,
       ControlsSpeed,
       ControlsLoop,
+      ControlsSlider,
     },
     computed: {
       ...mapGetters([
@@ -38,6 +41,7 @@
 <style lang="scss" scoped>
   .view-controls{
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     background-color: #1b1b1b;
     padding: 16px 0;
