@@ -1,10 +1,10 @@
 {
     "name": "lottie-viewer",
-    "displayName": "Lottie Viewer",
+    "displayName": "Lottie Viewer (With timeline slider)",
     "description": "Preview Lottie animations while you edit them",
     "keywords": [
         "lottie",
-        "after effet",
+        "after effects",
         "preview",
         "animation"
     ],
@@ -13,13 +13,12 @@
         "color": "#fbfbfb",
         "theme": "light"
     },
-    "version": "1.0.0",
+    "version": "1.1.0",
     "repository": {
         "type": "git",
-        "url": "https://github.com/WilliamDASILVA/lottie-viewer.git"
+        "url": "https://github.com/tuur29/vscode-lottie-viewer.git"
     },
-    "author": "William DA SILVA <william.da.silva@outlook.com>",
-    "publisher": "williamdasilva",
+    "publisher": "tuur29",
     "engines": {
         "vscode": "^1.21.0"
     },
